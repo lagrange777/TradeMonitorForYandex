@@ -1,43 +1,43 @@
 package com.pippo.trademonitorforyandex.utils
 
+import android.content.Context
 import android.util.Log
 import com.android.volley.DefaultRetryPolicy
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.JsonObjectRequest
-import com.pippo.trademonitorforyandex.App
 import com.pippo.trademonitorforyandex.PippoApp
 import com.pippo.trademonitorforyandex.StockStorage
 import com.pippo.trademonitorforyandex.datamodels.Stock
 import org.json.JSONArray
-import org.json.JSONObject
 
 object HTTPHelper {
 
     const val URL = "https://finnhub.io/api/v1/stock/symbol?exchange=US&"
     const val TOKEN = "token=c1eaief48v6t1299ibtg"
 
-    fun askStockSymbols() {
+    fun askStockSymbols(context: Context) {
         val url = "$URL$TOKEN"
         val request = JsonArrayRequest(
             Request.Method.GET, url, null,
             { response ->
                 try {
                     parseStockSymbols(response)
-
                 } catch (e: Exception) {
                     Log.d("VOLLEY EXC", "$e")
                 }
             }, {
                 Log.d("VOLLEY ERROR", "$it")
             })
-        request.retryPolicy = DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 10, 0, 1f)
+        request.retryPolicy =
+            DefaultRetryPolicy(
+            DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 10,
+            0,
+            1f
+        )
         request.setShouldCache(false)
+        VolleySingleton.getInstance(context).addToRequestQueue(request)
 
-        PippoApp.getContext()
-        App.get?.let { context ->
-            VolleySingleton.getInstance(context).addToRequestQueue(request)
-        }
     }
 
     private fun parseStockSymbols(stockSymbolsList: JSONArray) {
@@ -54,5 +54,6 @@ object HTTPHelper {
             )
             StockStorage.stockSymbols.add(stockSymbol)
         }
+        StockStorage.onStockSymbolUpdate.invoke(Unit)
     }
 }

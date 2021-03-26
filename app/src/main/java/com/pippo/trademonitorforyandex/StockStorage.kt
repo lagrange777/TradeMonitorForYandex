@@ -18,18 +18,27 @@ object StockStorage {
      * Множество объектов с обновляемой информацией о текущей стоимости акции
      * В момент добавления/удаления элмента из множества срабатывает событие об изменении множества
      */
-    val stockTrades: HashSet<Stock.StockTrade> = hashSetOf()
+    val stockList: HashSet<Stock.StockTrade> = hashSetOf()
 
     /**
      * Лямбда, которая сигнализирует об обновлении списка
      * */
     var onStockTradeUpdate: (Unit) -> Unit = { }
+    var onStockSymbolUpdate: (Unit) -> Unit = { }
 
     /**
      * Метод для получения события
      * */
     fun onStockTradeUpdate(onUpdate: (Unit) -> Unit) {
         onStockTradeUpdate = onUpdate
+    }
+
+    fun onStockSymbolUpdate(onUpdate: (Unit) -> Unit) {
+        onStockSymbolUpdate = onUpdate
+    }
+
+    fun processStockTrade() {
+
     }
 }
 

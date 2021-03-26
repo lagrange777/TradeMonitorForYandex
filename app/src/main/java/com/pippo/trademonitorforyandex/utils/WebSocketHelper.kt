@@ -52,6 +52,10 @@ object WebSocketHelper {
         webSocketClient.connect()
     }
 
+    fun closeWebSocketClient() {
+        webSocketClient.close()
+    }
+
     private fun processMessage(message: String?) {
         message?.let {
             val moshi = Moshi.Builder().build()

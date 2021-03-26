@@ -2,32 +2,17 @@ package com.pippo.trademonitorforyandex
 
 import android.app.Application
 import android.content.Context
+import com.pippo.trademonitorforyandex.utils.WebSocketHelper
 
 class PippoApp : Application() {
 
-//    private var ctx: Context? = null
-//
-//    companion object {
-//        fun getContext() : Context? = ctx
-//    }
-//
-//    override fun onCreate() {
-//        super.onCreate()
-//        ctx = this
-//    }
-
-    private var sApplication: Application? = null
-
-    fun getApplication(): Application? {
-        return sApplication
-    }
-
-    fun getContext(): Context? {
-        return getApplication()!!.applicationContext
+    companion object {
+        var ctx: Context? = null
     }
 
     override fun onCreate() {
         super.onCreate()
-        sApplication = this
+        ctx = this
     }
+
 }

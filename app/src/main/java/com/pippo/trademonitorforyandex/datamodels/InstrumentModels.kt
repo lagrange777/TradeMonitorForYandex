@@ -8,7 +8,7 @@ import com.squareup.moshi.JsonClass
 data class BitcoinTicker(val price: String?)
 
 @JsonClass(generateAdapter = true)
-sealed class Stock {
+open class Stock {
 
     @JsonClass(generateAdapter = true)
     data class StockSymbol(
