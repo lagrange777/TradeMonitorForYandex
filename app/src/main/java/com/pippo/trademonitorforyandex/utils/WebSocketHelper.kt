@@ -2,13 +2,15 @@ package com.pippo.trademonitorforyandex.utils
 
 import android.util.Log
 import com.pippo.trademonitorforyandex.StockStorage
-import com.pippo.trademonitorforyandex.datamodels.Stock
-import com.pippo.trademonitorforyandex.ui.NavigationActivity
+import com.pippo.trademonitorforyandex.datamodels.StockData
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.java_websocket.client.WebSocketClient
 import org.java_websocket.handshake.ServerHandshake
-import java.lang.Exception
 import java.net.URI
 import javax.net.ssl.SSLSocketFactory
 
@@ -19,7 +21,7 @@ object WebSocketHelper {
     const val TAG = "Coinbase"
 
     private val coinbaseUri: URI? = URI(WEB_SOCKET_URL + TOKEN)
-    private  val socketFactory: SSLSocketFactory = SSLSocketFactory.getDefault() as SSLSocketFactory
+    private val socketFactory: SSLSocketFactory = SSLSocketFactory.getDefault() as SSLSocketFactory
 
     private lateinit var webSocketClient: WebSocketClient
 
@@ -39,7 +41,7 @@ object WebSocketHelper {
 
             override fun onClose(code: Int, reason: String?, remote: Boolean) {
                 Log.d(TAG, "onClose")
-                unsubscribeAll()
+//                unsubscribeAll(StockStorage.stockSymbols.keys.toList())
 
             }
 
@@ -58,15 +60,24 @@ object WebSocketHelper {
 
     private fun processMessage(message: String?) {
         message?.let {
-            val moshi = Moshi.Builder().build()
-            val adapter: JsonAdapter<Stock.StockTrade> =
-                moshi.adapter(Stock.StockTrade::class.java)
-            val stockTrade = adapter.fromJson(message)
-            stockTrade?.let {
-                StockStorage.stockTrades.add(stockTrade)
-                StockStorage.onStockTradeUpdate.invoke(Unit)
-            }
+//            val moshi = Moshi.Builder().build()
+//            val adapter: JsonAdapter<StockData.StockTrade> =
+//                moshi.adapter(StockData.StockTrade::class.java)
+//            val stockTrade = adapter.fromJson(message)
+//            stockTrade?.let {
+//                StockStorage.updateStockPosition(it)
+//            }
 
+        }
+    }
+
+    fun subscribeAll(symbols: List<String>) {
+        GlobalScope.launch(Dispatchers.IO) {
+            symbols.take(10).forEach {
+                Log.d( "onSubscribe", "{\"type\":\"subscribe\",\"symbol\":\"$it\"}")
+                webSocketClient.send("{\"type\":\"subscribe\",\"symbol\":\"$it\"}")
+                delay(100L)
+            }
         }
     }
 
@@ -74,12 +85,17 @@ object WebSocketHelper {
         webSocketClient.send("{\"type\":\"subscribe\",\"symbol\":\"$symbol\"}")
     }
 
-    fun unsubscribe(symbol: String) {
-        webSocketClient.send("{\"type\":\"unsubscribe\",\"symbol\":\"$symbol\"}")
+    fun unsubscribeAll(symbols: List<String>) {
+        GlobalScope.launch(Dispatchers.IO) {
+            symbols.forEach {
+                webSocketClient.send("{\"type\":\"unsubscribe\",\"symbol\":\"$it\"}")
+                delay(10L)
+            }
+        }
     }
 
-    fun unsubscribeAll() {
-        webSocketClient.send("{\"type\":\"unsubscribe\",\"symbol\":\"ALL\"}")
+    fun unsubscribe(symbol: String) {
+        webSocketClient.send("{\"type\":\"unsubscribe\",\"symbol\":\"$symbol\"}")
     }
 
 }

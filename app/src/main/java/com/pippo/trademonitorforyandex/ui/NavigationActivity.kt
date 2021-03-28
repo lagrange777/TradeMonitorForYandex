@@ -2,6 +2,7 @@ package com.pippo.trademonitorforyandex.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.pippo.trademonitorforyandex.StockStorage
 import com.pippo.trademonitorforyandex.databinding.ActivityNavigationBinding
 import com.pippo.trademonitorforyandex.ui.aboutinstrument.AboutInstrumentFragment
 import com.pippo.trademonitorforyandex.ui.market.MarketFragment
@@ -9,6 +10,10 @@ import com.pippo.trademonitorforyandex.utils.HTTPHelper
 import com.pippo.trademonitorforyandex.utils.NavDestination
 import com.pippo.trademonitorforyandex.utils.WebSocketHelper.closeWebSocketClient
 import com.pippo.trademonitorforyandex.utils.WebSocketHelper.createWebSocketClient
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class NavigationActivity : AppCompatActivity() {
 
@@ -24,7 +29,14 @@ class NavigationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         HTTPHelper.askStockSymbols(this)
-
+        StockStorage.getStockInitDataEvent {
+            StockStorage.stocks.keys.forEach { symbol ->
+                GlobalScope.launch(Dispatchers.IO) {
+                    HTTPHelper.askLastSymbolData(this@NavigationActivity, symbol)
+                    delay(50L)
+                }
+            }
+        }
         goTo(NavDestination.Market)
     }
 

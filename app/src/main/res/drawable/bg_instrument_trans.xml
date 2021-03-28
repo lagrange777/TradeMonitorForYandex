@@ -2,7 +2,7 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape>
-            <solid android:color="@color/market_card_1"/>
+            <solid android:color="@color/market_card_2"/>
             <corners  android:radius="16dp"/>
         </shape>
     </item>
