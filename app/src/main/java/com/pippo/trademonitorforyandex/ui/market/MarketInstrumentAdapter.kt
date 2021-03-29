@@ -81,6 +81,13 @@ class MarketInstrumentAdapter : RecyclerView.Adapter<MarketInstrumentAdapter.Vie
             fav.setOnClickListener {
                 onFavClick(stock.symbol)
             }
+            fav.setImageResource(
+                if (stock.isFav)
+                    R.drawable.ic_is_fav
+                else
+                    R.drawable.ic_is_not_fav
+            )
+
             if (isOdd) {
                 binding.root.setBackgroundResource(R.drawable.bg_instrument_trans)
             } else {

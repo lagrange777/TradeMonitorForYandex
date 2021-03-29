@@ -26,7 +26,7 @@ object HTTPHelper {
             { response ->
                 try {
                     Log.d("MILILOG 1", "$response")
-                    parseStockSymbols(response)
+                    parseStockSymbols(response, context)
                 } catch (e: Exception) {
                     Log.d("MILILOG EXC 1", "$e")
                 }
@@ -67,7 +67,8 @@ object HTTPHelper {
         VolleySingleton.getInstance(context).addToRequestQueue(request)
     }
 
-    private fun parseStockSymbols(stockSymbolsList: JSONArray) {
+    private fun parseStockSymbols(stockSymbolsList: JSONArray, context: Context) {
+        val favs = PrefsHelper.getFavs(context)
         for (i in 0 until stockSymbolsList.length()) {
             val stockSymbolItem = stockSymbolsList.getJSONObject(i)
             val stockSymbol = StockData.StockSymbol(
@@ -77,7 +78,8 @@ object HTTPHelper {
                 figi = stockSymbolItem.getString("figi"),
                 mic = stockSymbolItem.getString("mic"),
                 symbol = stockSymbolItem.getString("symbol"),
-                type = stockSymbolItem.getString("type")
+                type = stockSymbolItem.getString("type"),
+                isFav = stockSymbolItem.getString("symbol") in favs
             )
             StockStorage.stocks[stockSymbol.symbol] = stockSymbol
         }

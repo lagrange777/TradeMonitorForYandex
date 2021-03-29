@@ -19,6 +19,7 @@ open class StockData {
         val mic: String,
         val symbol: String,
         val type: String,
+        var isFav: Boolean = false,
         var tradeData: StockTradeData? = null
     ) : StockData()
 

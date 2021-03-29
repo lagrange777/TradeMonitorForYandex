@@ -8,6 +8,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.tabs.TabLayout
 import com.pippo.trademonitorforyandex.databinding.FragmentMarketBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -41,6 +42,7 @@ class MarketFragment : Fragment() {
         viewModel = ViewModelProvider(this).get(MarketViewModel::class.java)
         setSearch()
         setStockList()
+        setTabs()
     }
 
     private fun setSearch() {
@@ -73,6 +75,26 @@ class MarketFragment : Fragment() {
         }
     }
 
+    private fun setTabs() {
+        tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                when (tab?.position) {
+                    0 -> viewModel.onlyFavs = false
+
+                    1 -> viewModel.onlyFavs = true
+                }
+                adapter.submitList(viewModel.getFilteredStocks())
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+            }
+
+        })
+    }
+
     private fun setStockList() {
         stockList.layoutManager =
             LinearLayoutManager(
@@ -82,7 +104,7 @@ class MarketFragment : Fragment() {
             )
         stockList.adapter = adapter
         adapter.getOnFavClickEvent {
-            viewModel.addToFav(it)
+            viewModel.addToFav(it, requireContext())
         }
         setViewModelListener()
     }
