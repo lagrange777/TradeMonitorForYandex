@@ -18,7 +18,7 @@ object WebSocketHelper {
 
     const val WEB_SOCKET_URL = "wss://ws.finnhub.io"
     const val TOKEN = "?token=c1eaief48v6t1299ibtg"
-    const val TAG = "Coinbase"
+    const val TAG = "PIPPO WS"
 
     private val coinbaseUri: URI? = URI(WEB_SOCKET_URL + TOKEN)
     private val socketFactory: SSLSocketFactory = SSLSocketFactory.getDefault() as SSLSocketFactory
@@ -60,13 +60,13 @@ object WebSocketHelper {
 
     private fun processMessage(message: String?) {
         message?.let {
-//            val moshi = Moshi.Builder().build()
-//            val adapter: JsonAdapter<StockData.StockTrade> =
-//                moshi.adapter(StockData.StockTrade::class.java)
-//            val stockTrade = adapter.fromJson(message)
-//            stockTrade?.let {
-//                StockStorage.updateStockPosition(it)
-//            }
+            val moshi = Moshi.Builder().build()
+            val adapter: JsonAdapter<StockData.StockTradeData> =
+                moshi.adapter(StockData.StockTradeData::class.java)
+            val stockTrade = adapter.fromJson(message)
+            stockTrade?.let {
+                // TODO обновление параметров через веб-сокет
+            }
 
         }
     }

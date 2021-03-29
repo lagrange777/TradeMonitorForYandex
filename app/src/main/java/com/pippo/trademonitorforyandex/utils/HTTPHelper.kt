@@ -6,7 +6,6 @@ import com.android.volley.DefaultRetryPolicy
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.JsonObjectRequest
-import com.pippo.trademonitorforyandex.PippoApp
 import com.pippo.trademonitorforyandex.StockStorage
 import com.pippo.trademonitorforyandex.datamodels.StockData
 import org.json.JSONArray
@@ -25,13 +24,13 @@ object HTTPHelper {
             Request.Method.GET, url, null,
             { response ->
                 try {
-                    Log.d("MILILOG 1", "$response")
+                    Log.d("PIPPOLOG 1", "$response")
                     parseStockSymbols(response, context)
                 } catch (e: Exception) {
-                    Log.d("MILILOG EXC 1", "$e")
+                    Log.d("PIPPOLOG EXC 1", "$e")
                 }
             }, {
-                Log.d("MILILOG ER 1", "$it")
+                Log.d("PIPPOLOG ER 1", "$it")
             })
         request.retryPolicy =
             DefaultRetryPolicy(
@@ -49,13 +48,13 @@ object HTTPHelper {
             Request.Method.GET, url, null,
             { response ->
                 try {
-                    Log.d("MILILOG 2", "$response")
+                    Log.d("PIPPOLOG 2", "$response")
                     parseSymbolParams(response, symbol)
                 } catch (e: Exception) {
-                    Log.d("MILILOG EXC 2", "$e")
+                    Log.d("PIPPOLOG EXC 2", "$e")
                 }
             }, {
-                Log.d("MILILOG ER 2", "$it")
+                Log.d("PIPPOLOG ER 2", "$it")
             })
         request.retryPolicy =
             DefaultRetryPolicy(
